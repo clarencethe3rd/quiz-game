@@ -25,6 +25,11 @@ answer_boxes = [answer_box1,answer_box2,answer_box3,answer_box4]
 score = 0
 time_left = 10
 
+
+question_count = 0
+question_index = 0
+
+questions = []
 #display function
 def draw():
     screen.clear()
@@ -36,8 +41,19 @@ def draw():
     screen.draw.filled_rect(answer_box4,"SeaGreen2")
     screen.draw.filled_rect(timer_box,"purple")
     screen.draw.filled_rect(skip_box,"purple")
-    
+    screen.draw.textbox(str(time_left),timer_box,color = ("red"))
 
-    
-pgzrun.go()   
-
+def read_questions():
+    global question_count, questions
+    q_file=open("questions.txt","r")
+    for q in q_file:
+        print(q)
+        questions.append(q)
+    print(questions)
+#timer
+def timer():
+    global time_left
+    time_left = time_left - 1
+clock.schedule_interval(timer,1)
+read_questions()
+pgzrun.go()
