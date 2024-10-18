@@ -42,6 +42,12 @@ def draw():
     screen.draw.filled_rect(timer_box,"purple")
     screen.draw.filled_rect(skip_box,"purple")
     screen.draw.textbox(str(time_left),timer_box,color = ("red"))
+    screen.draw.textbox(question[0].strip(),question_box,color = ("black"))   
+    index = 1                                                                                           
+    for i in answer_boxes: 
+        screen.draw.textbox(question[index],i,color = ("yellow"))
+        index +=1 
+    
 
 def read_questions():
     global question_count, questions
@@ -50,10 +56,32 @@ def read_questions():
         print(q)
         questions.append(q)
     print(questions)
+def read_next_questions():
+    global question_index,questions 
+    question_index = question_index+1
+    return questions.pop(0).split(",")
+def on_mouse_down(pos):
+    global questions,question
+    index = 1
+    for box in answer_boxes:
+        if box.collidepoint(pos):
+            if index is int(question[5]):
+                correct_answer()
+        index +=1                                
+
+def correct_answer():
+    global question,questions
+    if questions:
+        question = read_next_questions()
+        
+
 #timer
 def timer():
     global time_left
     time_left = time_left - 1
 clock.schedule_interval(timer,1)
 read_questions()
+question = read_next_questions() 
+
+
 pgzrun.go()
