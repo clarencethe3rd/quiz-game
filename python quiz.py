@@ -1,7 +1,7 @@
 import pgzrun 
 WIDTH = 1000
 HEIGHT = 550
-
+is_game_over = False
 #drawing the boxes
 question_box = Rect(0,0,770,150)
 question_box.move_ip(20,25)
@@ -42,6 +42,7 @@ def draw():
     screen.draw.filled_rect(timer_box,"purple")
     screen.draw.filled_rect(skip_box,"purple")
     screen.draw.textbox(str(time_left),timer_box,color = ("red"))
+    screen.draw.textbox(("SKIP"),skip_box,color = ("red"))
     screen.draw.textbox(question[0].strip(),question_box,color = ("black"))   
     index = 1                                                                                           
     for i in answer_boxes: 
@@ -61,24 +62,44 @@ def read_next_questions():
     question_index = question_index+1
     return questions.pop(0).split(",")
 def on_mouse_down(pos):
-    global questions,question
+    global questions,question,time_left
     index = 1
     for box in answer_boxes:
         if box.collidepoint(pos):
             if index is int(question[5]):
                 correct_answer()
-        index +=1                                
+            else:
+                game_over()
+        index +=1          
+    if skip_box.collidepoint(pos):
+        skip()
+
+def skip():
+    global question,time_left
+    if questions and not is_game_over:
+        question = read_next_questions()
+        time_left = 10
+    else:
+        game_over()
+                 
 
 def correct_answer():
     global question,questions
     if questions:
         question = read_next_questions()
         
+def game_over():
+    global question,is_game_over
+    question = ["game over","-","-","-","-",3]
+    is_game_over = True
 
 #timer
 def timer():
-    global time_left
-    time_left = time_left - 1
+    global time_left,game_over
+    if is_game_over == False:
+        time_left = time_left - 1
+    if time_left == 0:
+        game_over()
 clock.schedule_interval(timer,1)
 read_questions()
 question = read_next_questions() 
